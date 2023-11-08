@@ -1,5 +1,5 @@
 from Node import Node
-def set_init_final_node(num_init_node:int,num_final_node:int,node_list:list):
+def set_init_final_node(num_init_node:int,num_final_node:int,node_list:list): #Funcion para establecer los nodos iniciales y finales
     node_list = node_list.copy()
     init_pos = num_init_node - 1  # Initial position
     final_pos = num_final_node - 1  # Final position
@@ -9,6 +9,10 @@ def set_init_final_node(num_init_node:int,num_final_node:int,node_list:list):
     final_node.final = True
     del node_list #Eliminamos la lista ya que no la vamos a ocupar mas
     return [init_node,final_node]
+def get_nodevalues(num_init_node:int,num_final_node:int,node_values:list):
+    if num_init_node > num_final_node: # Preguntamos si el nodo inicial es mayor al final
+        return node_values[num_init_node-1][num_final_node-1] #si el nodo inicial es mayor comenzaremos la busqueda por esa fila
+    return node_values[num_final_node-1][num_init_node-1] #si el nodo final es mayor comenzaremos la busqueda por esa fila
 #funcion de busqueda por cola, la funcion recibe como parametros, el nodo inicial, la lista de nodos, los antecesores, lista de nodos revisados,
 #el nodo actual, la lista de todos los nodos, y la cola de sucesores
 def node_cola_busqueda(init_node:Node, nodes:list, predecessors:list, nodes_review:list, actual_node:Node, bfs_node_list:list):
@@ -80,13 +84,74 @@ class Search():
     def Steepest_ascent_hill_climbing_search(self, num_init_node:int, num_final_node:int):
         sahcs_node_list = self.node_list.copy() # Lista de nodos para no trabajar con la original
         sahcs_node_values = self.node_values.copy() # Lista de los valores de los nodos para no trabajar con la original
-        nodes_init_final = set_init_final_node(num_init_node,num_final_node,self.node_list)
+        nodes_init_final = set_init_final_node(num_init_node,num_final_node,self.node_list) # Set initial and final node
         final_node = nodes_init_final.pop()
         init_node = nodes_init_final.pop()
         actual_node = init_node
         predecessors = []
-        nodes_review = []
+        values = []
         nodes = []
         route = []
-        return None
+        while not(actual_node == final_node):
+            antecesor = actual_node.num_node
+            nodes.append(actual_node.num_node)
+            valor_actual = get_nodevalues(actual_node.num_node,num_final_node,sahcs_node_values)
+            values.append(valor_actual)
+            if actual_node.num_node == num_init_node:
+                predecessors.append(0)
+            #Impresion del nodo actual
+            print(''.center(50,'-'))
+            print(f'Nodo actual:{actual_node.num_node}')
+            print(f'Nodos:      {nodes}\n'
+                  f'Valor:      {values}\n'
+                  f'Antecesor:  {predecessors}')
+            print(f'Lista para la ruta: {route}')
+            #Limpieza de listas de trabajo
+            predecessors.clear()
+            values.clear()
+            nodes.clear()
+            #Agregamos el nodo actual a la ruta
+            if actual_node.num_node == num_init_node:
+                route.append([actual_node.num_node,valor_actual,0])
+            else:
+                route.append([actual_node.num_node,valor_actual,antecesor])
+            print(''.center(50, '-'))
+            print(f'Nodo actual:{actual_node.num_node}')
+            print(f'Nodos:      {nodes}\n'
+                  f'Valor:      {values}\n'
+                  f'Antecesor:  {predecessors}')
+            print(f'Lista para la ruta: {route}')
+            #Se generan los sucesores del nodo actual con sus respectivos valores
+            for sucessor in actual_node.successors:
+                nodes.append(sucessor)
+                values.append(get_nodevalues(sucessor,num_final_node,sahcs_node_values))
+                predecessors.append(actual_node.num_node)
+            print(''.center(50, '-'))
+            print(f'Nodo actual:{actual_node.num_node}')
+            print(f'Nodos:      {nodes}\n'
+                  f'Valor:      {values}\n'
+                  f'Antecesor:  {predecessors}')
+            print(f'Lista para la ruta: {route}')
+            min_value = valor_actual #Empezamos la busqueda de un mejor valor
+            for value in values:
+                if value < min_value:
+                    min_value = value
+            if min_value == valor_actual: #Si ya no hay valores minimos al valor actual se termina la busqueda
+                final_route = []          #y se imprime la ruta parcial
+                for node in route:
+                    final_route.append(node[0])
+                print(''.center(50, '-'))
+                return final_route
+            best_sucessor = nodes[values.index(min_value)]
+            actual_node = sahcs_node_list[best_sucessor-1]
+            predecessors.clear()
+            values.clear()
+            nodes.clear()
+        else: #Cuando se llego al nodo final se regresa la ruta completa desde el nodo incial hasta el final
+            route.append([actual_node.num_node, valor_actual, antecesor])
+            final_route = []
+            for node in route:
+                final_route.append(node[0])
+            print(''.center(50, '-'))
+            return final_route
 
