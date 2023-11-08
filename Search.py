@@ -34,10 +34,6 @@ def cola_recursiva(init_node:Node, nodes:list, predecessors:list, nodes_review:l
             print(f'Nodo: {nodes}\nRevisado:{nodes_review}\nPredecessors:{predecessors}')  # Imprimimos la lista de nodos, si han sido revisados y
 
             actual_node = bfs_node_list[node_cola_actual.pop(0) - 1] #Le asignamos el valor del primer sucesor a la cola
-            print(f''.center(50, '-'))
-            print(f'Nodo actual: {actual_node.num_node}')  # Imprimimos el nodo actual
-            print(
-                f'Nodo: {nodes}\nRevisado:{nodes_review}\nPredecessors:{predecessors}')  # Imprimimos la lista de nodos, si han sido revisados y sus predecesores
 
 class Search():
     def __init__(self, ady_list: list):
@@ -59,6 +55,16 @@ class Search():
         predecessors = []
         nodes_review = []
         nodes = []
+        route = []
 
         #Comienzo de la busqueda
-        print(f'Nodo final encontrado:\n {cola_recursiva(init_node,nodes,predecessors,nodes_review,actual_node,bfs_node_list)}')
+        print(f'Nodo final encontrado:\n {cola_recursiva(init_node,nodes,predecessors,nodes_review,actual_node,bfs_node_list)}') #Nodo encontrado
+        #ESTABLECIMIENTO DE LA RUTA
+        pred_node = final_node.num_node #Comenzamos a trazar la ruta desde el nodo final
+        while not (pred_node == 0): #Mientras el nodo predecesor no sea 0 el ciclo continua
+            route.append(pred_node) #Agregamos el nodo predecesor a la ruta
+            predecessor_index = nodes.index(pred_node) #Obtenemos el indice de en donde se encuentra el predecesor
+            pred_node = predecessors[predecessor_index] #El predecesor se encuentra en el mismo indice de la lista de predecesores
+        else:
+            route.reverse() #Invertimos la ruta para que se muestre del nodo inicial al nodo final
+            print(f'Ruta: {route}') #Imprimimos la ruta
