@@ -64,9 +64,10 @@ node_values = [
     [1407,538,642,929,784,1290,475,255,727,719,1169,665,1027,679,564,1012,854,351,1043,1135,262,597,877,850,1130,957,0], #row 27
     [1000,131,534,522,839,883,882,310,320,312,1576,258,620,797,619,605,447,469,636,728,380,190,591,534,723,550,407,0] #row 28
 ]
-busqueda = Search(ady_list)
+busqueda = Search(ady_list, node_values)
 
 #for node in busqueda.node_list:
     #print(node)
-print('TEST BFS'.center(50,'-'))
-busqueda.Breadth_first_search(8,18)
+print('TEST BFS'.center(100,'-'))
+print(f'RUTA POR BUSQUEDA A LO ANCHO: {busqueda.Breadth_first_search(8,18)}')
+print('FIN TEST BFS'.center(100,'-'))
