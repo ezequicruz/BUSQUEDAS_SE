@@ -186,8 +186,77 @@ class Search():
         final_node = nodes_init_final.pop()  # Asignamos el valor del nodo final
         init_node = nodes_init_final.pop()  # Asignamos el valor del nodo inicial
         actual_node = init_node  # Inicializamos el valor del nodo actual con el nodo inicial
-        predecessors = []  # Declaramos las listas de trabajo
-        values = []
-        nodes = []
-        route = []
-        return None
+        # Declaramos las listas de trabajo
+        predecessors = []
+        nodes = [] #Nodos
+        g = []     #valor de arco, valor del arco que lleva al nodo antecesor
+        h = []     #valor de tabla, valor de la tabla del Nodo Actual respecto al nodo final
+        f = []     #Funcion heuristica
+        cerrado = [] #revisado
+        route = [] #Ruta
+        #Comenzamos insertando los valores del nodo inicial
+        predecessors.append(0) # como es el nodo incial su predecesor es 0
+        nodes.append(actual_node.num_node) #agregamos el nodo actual
+        g.append(0) #Agregamos el valor de 0 ya que no tiene predecesor
+        h.append(get_nodevalues(actual_node.num_node,final_node.num_node,bfs_node_values)) #Agregamos el valor del nodo inical respecto al nodo final
+        indice_nodo_actual = nodes.index(actual_node.num_node) #obtenemos el indice del nodo actual
+        f.append(g[indice_nodo_actual]+h[indice_nodo_actual]) # Agregamos el valor de la funcion heuristica
+        cerrado.append(False) # El valor de cerrado lo asignamos como false ya que no lo hemos revisado
+        #Imprimimos el primer nodo
+        print(f'Nodo actual: {actual_node.num_node}')
+        print(f'Antecesor\tNodo\tg + h\t = f\tCerrado')
+        print(f'{predecessors}\t{nodes}\t{g} + {h}\t = {f}\t{cerrado} ')
+        while not(actual_node.num_node == final_node.num_node): #Comenzamos con la busqueda
+            if actual_node.num_node == init_node.num_node:
+                cerrado.pop() #Quitamos el ultimo elemento de la lista de cerrado
+                cerrado.append(True) #Agregamos el valor de true ya que ya lo evaluamos
+            else:
+                cerrado[indice_mejor_sucesor] = True
+            #Imprimimos nuestra salida de la busqueda
+            print(''.center(50,'-'))
+            print(f'Nodo actual: {actual_node.num_node}')
+            print(f'Antecesor\tNodo\tg + h\t = f\tCerrado')
+            print(f'{predecessors}\t{nodes}\t{g} + {h}\t = {f}\t{cerrado} ')
+            #Generar los sucesores y evaluar
+            for sucessor in actual_node.successors_weights: #Asignamos los pesos de los nodos
+                if not (sucessor[0] in nodes): #Filtramos que no se agreguen a la lista de nodos, aquellos que ya estaban previamente
+                    predecessors.append(actual_node.num_node)   #Les agregamos como predecesor el nodo actual
+                    nodes.append(sucessor[0])   #Agregamos a la lista de nodos el sucesor
+                    g.append(sucessor[1])       #Agregamos el peso entre el sucesor y el nodo actual
+                    h.append(get_nodevalues(sucessor[0],final_node.num_node,bfs_node_values))   #Agregamos el peso entre el sucesor y el nodo final
+                    indice_nodo_actual = nodes.index(sucessor[0])   #obtenemos el indice del nodo con el que estamos trabajando
+                    f.append(g[indice_nodo_actual] + h[indice_nodo_actual]) #Calculamos el valor de la funcion heuristica
+                    cerrado.append(False) #Le asignamos al sucesor el valor de false
+            print(''.center(50,'-'))
+            print(f'Nodo actual: {actual_node.num_node}')
+            print(f'Antecesor\tNodo\tg + h\t = f\tCerrado')
+            print(f'{predecessors}\t{nodes}\t{g} + {h}\t = {f}\t{cerrado} ')
+            #Seleccionar mejor nodo marcado como no revisado
+            primer_nodo_no_revisado = cerrado.index(False)
+            valor_minimo = [] #inicializamos una lista para los valores minimos
+            for node in range(primer_nodo_no_revisado,len(cerrado)-1): #Recorremos los nodos que aun no han sido
+                if not(cerrado[node] == True):                         #revisados y agregamos sus valores a la lista
+                    valor_minimo.append(f[node])
+            valor_minimo.sort()                                        #ordenamos la lista de menor a mayor
+            indice_mejor_sucesor = f.index(valor_minimo[0])            #obtenemos el indice del valor minimo
+            mejor_sucesor = nodes[indice_mejor_sucesor]                #obtenemos el nodo que es el mejor suscesor
+            del valor_minimo                                           #eliminamos la lista de valores minimos
+            actual_node = bfs_node_list[mejor_sucesor-1]               #El mejor sucesor se convierte en el nodo actual
+
+        else:
+            #Impresion del nodo final
+            print('NODO ENCONTRADO'.center(50, '-'))
+            print(f'Nodo actual: {actual_node.num_node}')
+            print(f'Antecesor\tNodo\tg + h\t = f\tCerrado')
+            print(f'{predecessors}\t{nodes}\t{g} + {h}\t = {f}\t{cerrado} ')
+            print(f'Nodo encontrado : {actual_node}')
+            #Establecemos la ruta
+            indice_pred = nodes.index(actual_node.num_node) #Obtenemos el indice del nodo final
+            antecesor = predecessors[indice_pred] #obtenemos el antecesor del nodo final
+            route.append(actual_node.num_node) #Agregamos el nodo final a la ruta
+            while not(antecesor == 0): #Mientras el antecesor no sea 0 continua el bucle
+                route.append(antecesor) #Agregamos el antecesor a la ruta
+                indice_pred = nodes.index(antecesor) #asignamos el indice del antecesor
+                antecesor = predecessors[indice_pred] #Asignamos el siguiente antecesor
+            route.reverse() #Invertimos el orden de la lista para que sea del nodo inicial al nodo final
+            return route #Regresamos la ruta del nodo inicial al nodo final
