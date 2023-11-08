@@ -35,7 +35,7 @@ ady_list = [None,   #row 0
             ]
 busqueda = Search(ady_list)
 
-for node in busqueda.node_list:
-    print(node)
+#for node in busqueda.node_list:
+    #print(node)
 print('TEST BFS'.center(50,'-'))
 busqueda.Breadth_first_search(8,18)
