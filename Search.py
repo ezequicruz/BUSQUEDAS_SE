@@ -1,7 +1,7 @@
 from Node import Node
 #funcion de busqueda recursiva, la funcion recibe como parametros, el nodo inicial, la lista de nodos, los antecesores, lista de nodos revisados,
 #el nodo actual, la lista de todos los nodos, y la cola de sucesores
-def cola_recursiva(init_node:Node, nodes:list, predecessors:list, nodes_review:list,actual_node:Node,bfs_node_list:list):
+def node_cola_busqueda(init_node:Node, nodes:list, predecessors:list, nodes_review:list, actual_node:Node, bfs_node_list:list):
     node_cola_actual = [] #Inicializamos la cola actual como una lista vacia
     if init_node.num_node == actual_node.num_node: #Revisamos si nos encontramos en el nodo inicial
         predecessors.append(0)
@@ -58,7 +58,7 @@ class Search():
         route = []
 
         #Comienzo de la busqueda
-        print(f'Nodo final encontrado:\n {cola_recursiva(init_node,nodes,predecessors,nodes_review,actual_node,bfs_node_list)}') #Nodo encontrado
+        print(f'Nodo final encontrado:\n {node_cola_busqueda(init_node, nodes, predecessors, nodes_review, actual_node, bfs_node_list)}') #Nodo encontrado
         #ESTABLECIMIENTO DE LA RUTA
         pred_node = final_node.num_node #Comenzamos a trazar la ruta desde el nodo final
         while not (pred_node == 0): #Mientras el nodo predecesor no sea 0 el ciclo continua
